@@ -5,7 +5,6 @@ import discord
 import pydest
 from dotenv import load_dotenv
 from discord import app_commands
-from discord import SelectOption
 from discord.app_commands import Choice
 
 load_dotenv()
