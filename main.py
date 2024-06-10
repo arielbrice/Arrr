@@ -4,7 +4,7 @@ import os
 import discord
 import pydest
 from dotenv import load_dotenv
-from discord import app_commands
+from discord import app_commands 
 from discord.app_commands import Choice
 
 load_dotenv()
@@ -64,8 +64,10 @@ async def destiny(interaction: discord.Interaction):
     discord.app_commands.Choice(name="PLAYSTATION", value=2),
     discord.app_commands.Choice(name="PC", value=3),
 ])
-async def finddestinyuser(interaction: discord.Interaction, username: str, platform: discord.app_commands.Choice[int]):
+async def finddestinyuser(interaction: discord.Interaction, platform: discord.app_commands.Choice[int] ):
     destiny = pydest.Pydest(BUNGIE_TOKEN)
+    username = interaction.user.nick
+    
     res = await destiny.api.search_destiny_player(platform.value, username)
 
     if res['ErrorCode'] == 1 and len(res['Response']) > 0:
