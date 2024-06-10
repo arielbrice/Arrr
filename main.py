@@ -5,11 +5,13 @@ import discord
 import pydest
 from dotenv import load_dotenv
 from discord import app_commands
+from discord import SelectOption
+from discord.app_commands import Choice
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 BUNGIE_TOKEN = os.getenv('BUNGIE_TOKEN')
-platforms = {'XBOX': 1, 'PLAYSTATION': 2, 'PC': 3}
+#platforms = {'XBOX': 1, 'PLAYSTATION': 2, 'PC': 3}
 
 client = discord.Client(intents=discord.Intents.default())
 MY_GUILD = discord.Object(os.getenv('GUILD'))
@@ -58,19 +60,15 @@ async def destiny(interaction: discord.Interaction):
 
 
 @client.tree.command()
-async def finddestinyuser(interaction: discord.Interaction):
+@app_commands.choices(platform = [
+    discord.app_commands.Choice(name="XBOX", value=1),
+    discord.app_commands.Choice(name="PLAYSTATION", value=2),
+    discord.app_commands.Choice(name="PC", value=3),
+])
+async def finddestinyuser(interaction: discord.Interaction, username: str, platform: discord.app_commands.Choice[int]):
     destiny = pydest.Pydest(BUNGIE_TOKEN)
-
-    platform = None
-    while not platform:
-        user_input = input('Enter your platform (xbox, playstation, or pc): ')
-        if user_input.upper() in platforms.keys():
-            platform = platforms.get(user_input.upper())
-        else:
-            print('Invalid platform.')
-
-    username = input('Enter the username to locate: ')
-    res = await destiny.api.search_destiny_player(platform, username)
+    print(platform)
+    res = await destiny.api.search_destiny_player(platform.value, username)
 
     if res['ErrorCode'] == 1 and len(res['Response']) > 0:
         print("---")
@@ -82,6 +80,8 @@ async def finddestinyuser(interaction: discord.Interaction):
         print("Could not locate player.")
 
     await destiny.close()
+    await interaction.response.send_message("Display Name: {}".format(res['Response'][0]['displayName']) + "\n" + "Membership ID: {}".format(res['Response'][0]['membershipId']))
+
 
 
 client.run(TOKEN)
