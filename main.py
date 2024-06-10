@@ -67,7 +67,6 @@ async def destiny(interaction: discord.Interaction):
 ])
 async def finddestinyuser(interaction: discord.Interaction, username: str, platform: discord.app_commands.Choice[int]):
     destiny = pydest.Pydest(BUNGIE_TOKEN)
-    print(platform)
     res = await destiny.api.search_destiny_player(platform.value, username)
 
     if res['ErrorCode'] == 1 and len(res['Response']) > 0:
@@ -76,11 +75,13 @@ async def finddestinyuser(interaction: discord.Interaction, username: str, platf
         print("Display Name: {}".format(res['Response'][0]['displayName']))
         print("Membership ID: {}".format(res['Response'][0]['membershipId']))
         print(res['Response'])
+        await interaction.response.send_message("Display Name: {}".format(res['Response'][0]['displayName']) + "\n" + "Membership ID: {}".format(res['Response'][0]['membershipId']))
     else:
         print("Could not locate player.")
+        await interaction.response.send_message('Could not locate player')
 
     await destiny.close()
-    await interaction.response.send_message("Display Name: {}".format(res['Response'][0]['displayName']) + "\n" + "Membership ID: {}".format(res['Response'][0]['membershipId']))
+    
 
 
 
