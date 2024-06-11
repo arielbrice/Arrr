@@ -64,9 +64,10 @@ async def destiny(interaction: discord.Interaction):
     discord.app_commands.Choice(name="PLAYSTATION", value=2),
     discord.app_commands.Choice(name="PC", value=3),
 ])
-async def finddestinyuser(interaction: discord.Interaction, platform: discord.app_commands.Choice[int] ):
+async def finddestinyuser(interaction: discord.Interaction, platform: discord.app_commands.Choice[int], username: str = None):
     destiny = pydest.Pydest(BUNGIE_TOKEN)
-    username = interaction.user.nick
+    if username == None:
+        username = interaction.user.nick
     
     res = await destiny.api.search_destiny_player(platform.value, username)
 
@@ -79,7 +80,7 @@ async def finddestinyuser(interaction: discord.Interaction, platform: discord.ap
         await interaction.response.send_message("Display Name: {}".format(res['Response'][0]['displayName']) + "\n" + "Membership ID: {}".format(res['Response'][0]['membershipId']))
     else:
         print("Could not locate player.")
-        await interaction.response.send_message('Could not locate player')
+        await interaction.response.send_message('Could not locate player. Please Check your Server Nickname')
 
     await destiny.close()
     
